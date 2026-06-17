@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 from flask import Flask, render_template, request, jsonify
 
-app = Flask(__name__, template_folder="frontend/templates", static_folder="frontend/static")
+app = Flask(__name__, template_folder="templates")
 
 # Dynamic file directory mapping for secure scikit-learn weights loading
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
