@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ashwini Asangi PCOS Diagnostic Lab</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
+        .report-section { border-bottom: 1px solid #e2e8f0; padding: 12px 0; }
+        .grid-data { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px; }
+        .btn-print { background: #475569; margin-top: 16px; }
+        .btn-print:hover { background: #334155; }
+        .diary-checkbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
+        .checkbox-group { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+        .history-table th, .history-table td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; }
+        .history-table th { background-color: #f1f5f9; font-weight: 600; }
+        .interactive-tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 15px; }
+        .tool-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 16px; border-radius: 12px; font-size: 13px; }
+        .water-btn { background: #06b6d4; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; margin-top: 8px; }
+        .diary-log-item { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #475569; padding: 10px; border-radius: 6px; margin-top: 8px; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div style="background-color: #0d9488; color: #ffffff; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold;">⚕️</div>
+            Ashwini Asangi<span> PCOS Diagnostic Lab</span>
+        </div>
+        <div class="nav-links">
+            <a href="/home">Hub Homepage</a>
+            <a href="/diagnostic" class="active">Daily Tracker & Lab</a>
+            <a href="/chatbot">Clinical Chatbot</a>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="grid-2">
+            <div>
+                <!-- Module 1: Daily Symptoms Diary Checklist -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <h2 style="color: #0f172a; margin-top:0; margin-bottom:4px; font-size: 18px;">📝 Personal Daily Wellness Diary</h2>
+                    <p style="color:#64748b; font-size:13px; margin:0 0 15px 0;">Log your current daily biological markers to track symptom variance patterns over time.</p>
+                    <div class="diary-checkbox-grid">
+                        <div class="checkbox-group"><input type="checkbox" id="diary_fatigue"> <label>Experiencing Lethargy / Fatigue</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="diary_bloating"> <label>Abdominal Bloating / Cramps</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="diary_mood"> <label>Sudden Mood Fluctuations</label></div>
+                        <div class="checkbox-group"><input type="checkbox" id="diary_hairloss"> <label>Scalp Hair Thinning / Shedding</label></div>
+                    </div>
+                    
+                    <div class="interactive-tool-grid">
+                        <div class="tool-box">
+                            <span style="font-weight:700; color:#0f172a;">💧 Hydration Assistant</span>
+                            <div style="margin-top:4px; color:#475569;">Logged Intake: <span id="water_count" style="font-weight:700; color:#06b6d4;">0</span> / 8 Glasses</div>
+                            <button type="button" onclick="addWaterGlass()" class="water-btn">+ Log 1 Glass</button>
+                        </div>
+                        <div class="tool-box">
+                            <span style="font-weight:700; color:#0f172a;">🌸 Active Phase Focus</span>
+                            <div style="margin-top:4px; color:#475569; font-size:12px;">Estrogen Optimization: Prioritize iron-rich leafy greens, light aerobic tracking, and steady recovery sleep cycles today.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top:15px;">
+                        <label>Daily Health Logs / Notes</label>
+                        <input type="text" id="diary_notes" placeholder="Note down energy levels, cravings, or cycle tracking details...">
+                    </div>
+                    <button type="button" onclick="saveDailyDiaryEntry()" class="btn" style="margin-top:15px; background:#0d9488;">Save Today's Diary Entry Logs</button>
+                    
+                    <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                        <span style="font-weight:700; font-size:13px; color:#475569;">📋 Saved Diary History Logs</span>
+                        <div id="diaryLogsDisplayContainer" style="max-height: 150px; overflow-y: auto; margin-top: 5px;"></div>
+                    </div>
+                </div>
+                <!-- Module 2: Core Diagnostic Parameter Inputs Form Block -->
+                <div class="card">
+                    <h2 style="color: #0f172a; margin-top:0; margin-bottom:4px; font-size: 18px;">🔬 Advanced Multi-Parametric Evaluation</h2>
+                    <p style="color:#64748b; font-size:13px; margin:0 0 20px 0;">Configure clinical indicators to execute real-time machine learning prediction models.</p>
+                    <form id="evaluationForm">
+                        <div class="form-section-title">⚖️ Physical & Weight Parameters</div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Patient Age (Years)</label><input type="number" id="age" value="25"></div>
+                            <div class="form-group"><label>Patient Weight (kg)</label><input type="number" id="weight" value="65"></div>
+                            <div class="form-group"><label>Patient Height (cm)</label><input type="number" id="height" value="162"></div>
+                            <div class="form-group"><label>Sudden Weight Gain</label><select id="weight_gain"><option value="0">No (Stable Weight)</option><option value="1">Yes (Rapid Increase)</option></select></div>
+                        </div>
+                        <div class="form-section-title">🔄 Cycle Indicators</div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Cycle Regularity Status</label><select id="cycle_regularity"><option value="0">Regular (21-35 day interval)</option><option value="1">Irregular / Absent Phases</option></select></div>
+                        </div>
+                        <div class="form-section-title">🧬 Epidermal Manifestations</div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Excessive Facial/Body Hair</label><select id="hair_growth"><option value="0">No (Normal Density)</option><option value="1">Yes (Thick Dark Growth)</option></select></div>
+                            <div class="form-group"><label>Skin Darkening (Neck/Armpits)</label><select id="skin_darkening"><option value="0">No Markings</option><option value="1">Yes (Velvety Pigmentation)</option></select></div>
+                            <div class="form-group"><label>Chronic Treatment-Resistant Acne</label><select id="pimples"><option value="0">No / Minimal</option><option value="1">Yes (Severe Outbreaks)</option></select></div>
+                        </div>
+                        <button type="button" onclick="runDiagnosticPipeline()" class="btn btn-block" style="margin-top:24px;">Trigger Automated AI Diagnostic Evaluation</button>
+                    </form>
+                </div>
+
+                <!-- Module 3: Long-term Patient History Tracker Table -->
+                <div class="card" style="margin-top:24px;">
+                    <h3 style="margin:0 0 4px 0; font-size:16px; color:#0f172a;">📊 Historical Biological Trend Logs</h3>
+                    <p style="color:#64748b; font-size:12px; margin:0;">Review saved evaluation logs to share tracking charts with your medical consultant specialist.</p>
+                    <table class="history-table">
+                        <thead><tr><th>Date Stamp</th><th>Age</th><th>Weight (kg)</th><th>BMI Score</th><th>Cycle Track</th><th>AI Risk Factor</th></tr></thead>
+                        <tbody id="historyTableBody"></tbody>
+                    </table>
+                    <button onclick="clearSavedLogs()" class="btn" style="background:#ef4444; padding:8px 16px; font-size:12px; margin-top:12px;">Clear Tracked Logs History</button>
+                </div>
+            </div>
+            <!-- Right Side Dynamic Printable Report Card Summary Panel -->
+            <div class="card" style="height: max-content;">
+                <h2 class="card-title">🎯 Live Case Evaluation Report</h2>
+                <div id="resultPlaceholder" class="result-placeholder">Awaiting input profile submission to compile clinical records...</div>
+                <div id="resultsCard" class="hidden">
+                    <div id="printableReport" style="background:#ffffff; padding:4px;">
+                        <div class="report-header">
+                            <div>
+                                <h3 style="margin:0; color:#0f172a; font-size:16px;">ASHWINI ASANGI CLINICAL REPORT</h3>
+                                <span style="font-size:11px; color:#64748b;">Lead Clinician: Ashwini Asangi | Random Forest v2.1</span>
+                            </div>
+                            <div style="text-align:right; font-size:11px; color:#64748b;" id="report_date_stamp">Date: Verified Active</div>
+                        </div>
+                        <div class="report-section" style="text-align:center; padding:16px 0;">
+                            <span style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase;">Diagnostic Risk Assessment Factor</span>
+                            <div id="riskScoreValue" style="font-size:42px; font-weight:800; color:#0f172a; margin:4px 0;">0.0%</div>
+                            <div id="verdictBadge" class="badge" style="max-width:250px; margin:8px auto 0 auto;"></div>
+                        </div>
+                        <div class="report-section">
+                            <h4 style="margin:0 0 8px 0; font-size:13px; color:#0f172a;">📊 Summarized Patient Profile Records</h4>
+                            <div class="grid-data">
+                                <div>• Target Age: <span id="rep_age" style="font-weight:600;">-</span> Years</div>
+                                <div>• Metric BMI Profile: <span id="rep_bmi" style="font-weight:600;">-</span> kg/m²</div>
+                                <div>• Metabolic BMR Rate: <span id="rep_bmr" style="font-weight:600; color:#0d9488;">-</span> kcal/day</div>
+                                <div>• Cycle Path: <span id="rep_cycle" style="font-weight:600;">-</span></div>
+                                <div>• Metabolic Gain: <span id="rep_gain" style="font-weight:600;">-</span></div>
+                                <div>• Hirsutism Indicator: <span id="rep_hair" style="font-weight:600;">-</span></div>
+                            </div>
+                        </div>
+                        <div class="report-section" style="border:none; padding-bottom:0;">
+                            <div class="guidance-box">
+                                <span class="guidance-title">📋 Automated Treatment & Screening Suggestion:</span>
+                                <span id="guidanceText"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" onclick="printPatientReportCard()" class="btn btn-block btn-print">🖨️ Export Printable Medical Document</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTrackedLogsTable();
+            loadSavedDiaryNotesDisplay();
+            document.getElementById('water_count').innerText = localStorage.getItem('pcos_water_count') || '0';
+        });
+
+        function addWaterGlass() {
+            let count = parseInt(localStorage.getItem('pcos_water_count') || '0');
+            if(count < 8) count++;
+            localStorage.setItem('pcos_water_count', count);
+            document.getElementById('water_count').innerText = count;
+        }
+
+        function saveDailyDiaryEntry() {
+            const notesText = document.getElementById('diary_notes').value.trim();
+            const curDate = new Date().toLocaleDateString();
+            
+            let symptoms = [];
+            if(document.getElementById('diary_fatigue').checked) symptoms.push("Fatigue");
+            if(document.getElementById('diary_bloating').checked) symptoms.push("Bloating");
+            if(document.getElementById('diary_mood').checked) symptoms.push("Mood Shifts");
+            if(document.getElementById('diary_hairloss').checked) symptoms.push("Hair Thinning");
+            
+            const symptomString = symptoms.length > 0 ? symptoms.join(", ") : "Normal State";
+            const fullNote = notesText ? notesText : "No extra logs added.";
+
+            let savedDiary = JSON.parse(localStorage.getItem('pcos_user_diary_history') || '[]');
+            savedDiary.unshift({ date: curDate, symptoms: symptomString, notes: fullNote });
+            localStorage.setItem('pcos_user_diary_history', JSON.stringify(savedDiary));
+
+            alert("✨ Today's Symptom Diary Log Saved Successfully! Scroll down inside the diary module to review your history logs card list.");
+            
+            document.getElementById('diary_notes').value = '';
+            document.getElementById('diary_fatigue').checked = false;
+            document.getElementById('diary_bloating').checked = false;
+            document.getElementById('diary_mood').checked = false;
+            document.getElementById('diary_hairloss').checked = false;
+            
+            loadSavedDiaryNotesDisplay();
+        }
+
+        function loadSavedDiaryNotesDisplay() {
+            const displayBox = document.getElementById('diaryLogsDisplayContainer');
+            let savedDiary = JSON.parse(localStorage.getItem('pcos_user_diary_history') || '[]');
+            displayBox.innerHTML = '';
+
+            if(savedDiary.length === 0) {
+                displayBox.innerHTML = '<div style="color:#94a3b8; font-style:italic; text-align:center; font-size:12px; padding:10px;">No saved history diary notes found...</div>';
+                return;
+            }
+
+            savedDiary.forEach(item => {
+                displayBox.innerHTML += `<div class="diary-log-item">
+                    <strong>📅 Log Date: ${item.date}</strong> | <span style="color:#0d9488; font-weight:600;">Symptoms: ${item.symptoms}</span>
+                    <div style="color:#64748b; margin-top:4px; font-style:italic;">Notes: "${item.notes}"</div>
+                </div>`;
+            });
+        }
+
+        async function runDiagnosticPipeline() {
+            const ageVal = parseFloat(document.getElementById('age').value || 0);
+            const wVal = parseFloat(document.getElementById('weight').value || 0);
+            const hVal = parseFloat(document.getElementById('height').value || 0);
+            const cyc = document.getElementById('cycle_regularity');
+            const gain = document.getElementById('weight_gain');
+            const hair = document.getElementById('hair_growth');
+            const skin = document.getElementById('skin_darkening');
+            const pimp = document.getElementById('pimples');
+
+            const payload = {
+                age: ageVal, weight: wVal, height: hVal,
+                cycle_regularity: parseInt(cyc.value), weight_gain: parseInt(gain.value),
+                hair_growth: parseInt(hair.value), skin_darkening: parseInt(skin.value),
+                pimples: parseInt(pimp.value)
+            };
+            try {
+                const response = await fetch('/api/evaluate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if(data.status === "success") {
+                    document.getElementById('resultPlaceholder').classList.add('hidden');
+                    document.getElementById('resultsCard').classList.remove('hidden');
+                    document.getElementById('riskScoreValue').innerText = data.risk_score + "%";
+                    document.getElementById('guidanceText').innerText = data.guidance;
+                    
+                    const curDate = new Date().toLocaleDateString();
+                    document.getElementById('report_date_stamp').innerText = "Date: " + curDate;
+                    document.getElementById('rep_age').innerText = ageVal;
+                    const bmiCalc = (wVal / ((hVal/100) * (hVal/100))).toFixed(1);
+                    document.getElementById('rep_bmi').innerText = bmiCalc;
+                    
+                    const bmrCalc = Math.round(447.593 + (9.247 * wVal) + (3.098 * hVal) - (4.330 * ageVal));
+                    document.getElementById('rep_bmr').innerText = bmrCalc;
+                    
+                    document.getElementById('rep_cycle').innerText = cyc.options[cyc.selectedIndex].text;
+                    document.getElementById('rep_gain').innerText = gain.options[gain.selectedIndex].text;
+                    document.getElementById('rep_hair').innerText = hair.options[hair.selectedIndex].text;
+                    
+                    const badge = document.getElementById('verdictBadge');
+                    badge.innerText = data.verdict;
+                    if(data.risk_score > 50) { badge.className = "badge badge-positive"; }
+                    else { badge.className = "badge badge-negative"; }
+
+                    const newLog = { date: curDate, age: ageVal, weight: wVal, bmi: bmiCalc, cycle: cyc.options[cyc.selectedIndex].text.substring(0,9), risk: data.risk_score + "%" };
+                    let savedLogs = JSON.parse(localStorage.getItem('pcos_clinical_logs') || '[]');
+                    savedLogs.push(newLog);
+                    localStorage.setItem('pcos_clinical_logs', JSON.stringify(savedLogs));
+                    loadTrackedLogsTable();
+                }
+            } catch (error) { console.error(error); }
+        }
+        function loadTrackedLogsTable() {
+            const tableBody = document.getElementById('historyTableBody');
+            let savedLogs = JSON.parse(localStorage.getItem('pcos_clinical_logs') || '[]');
+            tableBody.innerHTML = '';
+            if(savedLogs.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">No tracked history logs cached. Run an evaluation to initialize logs...</td></tr>';
+                return;
+            }
+            savedLogs.forEach(log => {
+                tableBody.innerHTML += `<tr>
+                    <td><strong>${log.date}</strong></td><td>${log.age} Yrs</td><td>${log.weight} kg</td><td>${log.bmi}</td><td>${log.cycle}</td>
+                    <td><span style="font-weight:bold; color:${parseFloat(log.risk) > 50 ? '#b91c1c' : '#047857'}">${log.risk}</span></td>
+                </tr>`;
+            });
+        }
+        function clearSavedLogs() {
+            localStorage.removeItem('pcos_clinical_logs');
+            localStorage.removeItem('pcos_user_diary_history');
+            localStorage.setItem('pcos_water_count', '0');
+            document.getElementById('water_count').innerText = '0';
+            loadTrackedLogsTable();
+            loadSavedDiaryNotesDisplay();
+        }
+        function printPatientReportCard() {
+            const printContent = document.getElementById('printableReport').innerHTML;
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
